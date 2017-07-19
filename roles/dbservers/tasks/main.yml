@@ -1,0 +1,52 @@
+- name: Create mongodb repo file
+  template:
+    src: mongodb-org-3.4.repo.j2
+    dest: /etc/yum.repos.d/mongodb-org-3.4.repo
+    owner: root
+    group: root
+    mode: 0644
+- name: Install MongoDB
+  yum:
+    name: mongodb-org
+    state: latest
+  notify: 
+    - Selinux allow MongoDB to listen on port 27017
+    - Configure MongoDB without authorization
+- name: Execute notified job if any
+  meta: flush_handlers
+- name: Start and enable MongoDB
+  service:
+    name: mongod
+    state: started
+    enabled: yes
+- name: Create Mongo Working directory
+  file:
+    path: "{{ mongowrk }}"
+    state: directory
+    mode: 0755
+- name: Create inititalization DB query
+  template:
+    src: db_initialization.js.j2
+    dest: "{{ mongowrk }}/db_initialization.js"
+    owner: root
+    group: root
+    mode: 0600
+- name: Verify if Mongod has been secured
+  command: "grep '^ *authorization: *enabled' /etc/mongod.conf"
+  register: authResult
+  ignore_errors: true
+- block:
+  - name: Create user and collection
+    command: "mongo {{ mongowrk }}/db_initialization.js"
+  - name: Secure Mongo DB
+    vars:
+      mongodsecurity: enabled
+    template:
+      src: mongod.conf.j2
+      dest: /etc/mongod.conf
+      owner: root
+      group: root
+      mode: 0644
+  - name: Restart MongoDB
+    service: name=mongod state=restarted
+  when: authResult|failed

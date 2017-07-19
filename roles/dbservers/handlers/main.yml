@@ -1,0 +1,17 @@
+- name: Selinux allow MongoDB to listen on port 27017
+  seport:
+    ports: 27017
+    proto: tcp
+    setype: mongod_port_t
+    state: present
+- name : Configure MongoDB without authorization
+  vars:
+    mongodsecurity: disabled
+  template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: 0644
+- name: Restart MongoDB
+  service: name=mongod state=restarted

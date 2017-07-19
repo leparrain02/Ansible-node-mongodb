@@ -1,0 +1,2 @@
+datadir: "/var/lib/mongo"
+mongowrk: "/data/mongod_src"
