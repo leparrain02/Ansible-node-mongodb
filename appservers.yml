@@ -2,4 +2,5 @@
   remote_user: vagrant
   become: yes
   roles:
+    - common
     - appservers

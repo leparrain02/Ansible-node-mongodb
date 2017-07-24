@@ -1,0 +1,51 @@
+- name: Addinf EPEL repo
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: no
+- name: Node(NPM) installation
+  yum: name=npm state=latest
+- name: Application group creation
+  group: name=nodeuser state=present
+- name: Application user creation
+  user:
+    name: nodeuser
+    group: nodeuser
+    createhome: no
+    home: "{{ app_dir }}"
+    shell: /bin/false
+- name: Application folder creation
+  file: 
+    path: "{{ app_dir }}"
+    owner: nodeuser
+    group: nodeuser
+    mode: 0755
+    state: directory
+- name: Transfer application on remote host
+  unarchive:
+    src: customerapp.tgz
+    dest: "{{ app_dir }}"
+    owner: nodeuser
+    group: nodeuser
+- name: Node module installation
+  command: npm install 
+  args:
+    chdir: "{{ app_dir }}"
+    creates: "{{ app_dir }}/node_modules"
+- name: environment varibles creation
+  template: 
+    src: config.env.js.j2
+    dest: "{{ app_dir }}/config/config.{{ app_env }}.js"
+    mode: 0600
+    owner: nodeuser
+    group: nodeuser  
+- name: NodeJS application service creation
+  template:
+    src: mynodeservice.service.j2
+    dest: /etc/systemd/system/nodejsapp.service
+    mode: 0644
+    owner: root
+    group: root
+- name: Starting application
+  service: name=nodejsapp state=started enabled=yes

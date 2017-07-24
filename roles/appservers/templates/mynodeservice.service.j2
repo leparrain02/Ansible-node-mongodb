@@ -1,0 +1,17 @@
+[Unit]
+Description=Service_nodejs
+After=network.target
+
+[Service]
+ExecStart={{ app_dir }}/bin/www
+ExecStop=/bin/kill `cat $PIDFile`
+PIDFile=/var/run/nodeapp.pid
+Restart=always
+User=nodeuser
+Group=nodeuser
+Environment=PATH=/usr/bin:/usr/local/bin:/opt/nodejs/bin
+Environment=NODE_ENV={{ app_env }}
+WorkingDirectory={{ app_dir }}
+
+[Install]
+WantedBy=multi-user.target

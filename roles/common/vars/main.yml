@@ -1,3 +1,4 @@
+db_port: 27017
 app_dbname: customers
 admin_user: admin
 admin_password: "{{ lookup('password', 'credentials/' + app_env + '/admin length=15') }}"

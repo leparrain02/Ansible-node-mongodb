@@ -1,6 +1,6 @@
-- name: Selinux allow MongoDB to listen on port 27017
+- name: Selinux allow MongoDB to listen on port
   seport:
-    ports: 27017
+    ports: "{{ db_port }}"
     proto: tcp
     setype: mongod_port_t
     state: present

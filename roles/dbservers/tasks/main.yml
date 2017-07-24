@@ -10,7 +10,7 @@
     name: mongodb-org
     state: latest
   notify: 
-    - Selinux allow MongoDB to listen on port 27017
+    - Selinux allow MongoDB to listen on port
     - Configure MongoDB without authorization
 - name: Execute notified job if any
   meta: flush_handlers
@@ -50,3 +50,10 @@
   - name: Restart MongoDB
     service: name=mongod state=restarted
   when: authResult|failed
+- name: "Allow appserver to connect on port {{ db_port }}"
+  firewalld:
+    port: "{{ db_port }}/tcp"
+    source: "{{ item }}"
+    state: enabled
+  with_items: "{{ groups['appservers'] }}"
+    

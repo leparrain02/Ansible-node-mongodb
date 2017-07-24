@@ -6,6 +6,7 @@ db.createUser(
     roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
   }
 );
+db = db.getSiblingDB('{{ app_dbname }}');
 db.createUser(
   {
     user: "{{ app_user }}",
