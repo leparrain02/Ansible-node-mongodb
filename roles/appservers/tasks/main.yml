@@ -1,9 +1,17 @@
-- name: Addinf EPEL repo
-  yum_repository:
-    name: epel
-    description: EPEL YUM repo
-    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
-    gpgcheck: no
+- name: Check if EPEL repo exists
+  stat: 
+    path: /etc/yum.repos.d/epel.repo
+  register: stat_result
+- block: 
+  - name: get EPEL repo
+    uri: 
+      url: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      dest: /tmp/epel-release-latest-7.noarch.rpm
+      method: GET
+      creates: /tmp/epel-release-latest-7.noarch.rpm
+  - name: Adding EPEL repo
+    yum: name=/tmp/epel-release-latest-7.noarch.rpm state=present
+  when: stat_result.stat.exists == False
 - name: Node(NPM) installation
   yum: name=npm state=latest
 - name: Application group creation
