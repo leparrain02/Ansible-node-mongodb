@@ -12,6 +12,18 @@
   - name: Adding EPEL repo
     yum: name=/tmp/epel-release-latest-7.noarch.rpm state=present
   when: stat_result.stat.exists == False
+- name: Check if npm dependencies is installed
+  command: rpm -q http-parser
+  register: pkg_result
+- block:
+  - name: get http-parser package
+    uri: http://springdale.math.ias.edu/data/puias/unsupported/7/x86_64/http-parser-2.7.1-3.sdl7.x86_64.rpm
+    dest: /tmp/http-parser-2.7.1-3.sdl7.x86_64.rpm
+    method: GET
+    creates: /tmp/http-parser-2.7.1-3.sdl7.x86_64.rpm
+  - name: Install http-parser
+    yum: name=/tmp/http-parser-2.7.1-3.sdl7.x86_64.rpm state=present
+  when: pkg_result|failed
 - name: Node(NPM) installation
   yum: name=npm state=latest
 - name: Application group creation
