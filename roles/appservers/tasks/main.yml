@@ -15,6 +15,7 @@
 - name: Check if npm dependencies is installed
   command: rpm -q http-parser
   register: pkg_result
+  ignore_errors: true
 - block:
   - name: get http-parser package
     uri: 
