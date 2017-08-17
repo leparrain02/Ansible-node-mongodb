@@ -14,4 +14,6 @@ db.createUser(
     roles: [ { role: "readWrite", db: "{{ app_dbname }}" } ]
   }
 );
+db.createCollection("customers");
+db.customers.createIndex( { "name": 1 }, { unique: true } );
 
