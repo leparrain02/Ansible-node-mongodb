@@ -1,8 +1,8 @@
 [appservers]
-192.168.10.5 ansible_ssh_private_key_file=/data/VagrantRepo/test1/.vagrant/machines/vmnode1/virtualbox/private_key
+192.168.5.50 ansible_ssh_private_key_file=.vagrant/machines/myappserver/virtualbox/private_key
 
 [dbservers]
-192.168.10.6 ansible_ssh_private_key_file=/data/VagrantRepo/test1/.vagrant/machines/vmnode2/virtualbox/private_key
+192.168.10.6 ansible_ssh_private_key_file=.vagrant/machines/mydbserver/virtualbox/private_key
 
 [all:vars]
 app_env=development
